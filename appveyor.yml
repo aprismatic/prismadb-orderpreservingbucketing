@@ -1,0 +1,33 @@
+---
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+skip_tags: true
+branches:
+  only:
+    - master
+build:
+  publish_nuget: true
+  publish_nuget_symbols: true
+  verbosity: minimal
+before_build:
+  - nuget update -self
+  - nuget restore
+test_script:
+  - dotnet test .\Tests\Tests.csproj --no-build
+configuration: Release
+image: "Visual Studio 2017"
+nuget:
+  disable_publish_on_pr: true
+cache:
+  - '%USERPROFILE%\.nuget\packages'
+environment:
+  AppVeyorAPIToken:
+    secure: GvygCCndEp8eiXvItooIyglWYnyfUvg4YNyaufw3N3A=
+  PrismaDBAppVeyorNuGetFeedLogin:
+    secure: ASGQxa7k1PALAzaIFIvq2eaU1rIQCR2NLkFZ7aS7FOg=
+  PrismaDBAppVeyorNuGetFeedPassword:
+    secure: QEh7KwK97KEMxiNYpO0qww==
+version: "0.0.1.{build}"

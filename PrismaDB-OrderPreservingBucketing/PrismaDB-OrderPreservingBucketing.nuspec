@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>PrismaDB-OrderPreservingBucketing</id>
+    <title>$title$</title>
+    <version>$version$</version>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <description>$description$</description>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+  </metadata>
+</package>

@@ -3,6 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>PrismaDB.OrderPreservingBucketing</RootNamespace>
+    <Version>0.0.1.0</Version>
+    <Description>An order-preserving hashing library for Prisma/DB.</Description>
+    <Company>Nanyang Technological Unviersity</Company>
+    <Product>PrismaDB-OrderPreservingBucketing</Product>
+    <Authors>Vasily Sidorov (bazzilic)</Authors>
   </PropertyGroup>
 
 </Project>
