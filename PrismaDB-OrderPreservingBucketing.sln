@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2035
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrismaDB-OrderPreservingBucketing", "PrismaDB-OrderPreservingBucketing\PrismaDB-OrderPreservingBucketing.csproj", "{0D2FFB0B-374F-48CA-B39D-C3918726FB00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{5C3DBB2A-B56B-4B57-9E6B-103D3700969B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{833F9880-2D15-4ABC-A8B0-8EF2B720C221}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D2FFB0B-374F-48CA-B39D-C3918726FB00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D2FFB0B-374F-48CA-B39D-C3918726FB00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D2FFB0B-374F-48CA-B39D-C3918726FB00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D2FFB0B-374F-48CA-B39D-C3918726FB00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C3DBB2A-B56B-4B57-9E6B-103D3700969B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C3DBB2A-B56B-4B57-9E6B-103D3700969B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C3DBB2A-B56B-4B57-9E6B-103D3700969B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C3DBB2A-B56B-4B57-9E6B-103D3700969B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8ED1B0C0-E013-46F5-B032-FCDEF066F790}
+	EndGlobalSection
+EndGlobal
