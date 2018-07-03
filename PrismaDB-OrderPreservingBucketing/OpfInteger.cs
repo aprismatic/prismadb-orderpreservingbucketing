@@ -11,22 +11,22 @@ namespace PrismaDB.OrderPreservingBucketing
         private readonly UInt64 _width;
 
         private ConcurrentSortedList _bucketNos; // existing bucket numbers
-        private ConcurrentDictionary<UInt64, UInt64> _bucketIds; // bucket number -> bucket id
-        private ConcurrentDictionary<UInt64, byte> _bucketIdList; // existing bucket Ids
+        private ConcurrentDictionary<UInt64, Int64> _bucketIds; // bucket number -> bucket id
+        private ConcurrentDictionary<Int64, byte> _bucketIdList; // existing bucket Ids
 
         public OpfInteger(int width)
         {
             if (width < 3) throw new ApplicationException("Bucket width should be >= 3");
             _width = (UInt64)width;
             _bucketNos = new ConcurrentSortedList();
-            _bucketIds = new ConcurrentDictionary<UInt64, UInt64>();
-            _bucketIdList = new ConcurrentDictionary<UInt64, byte>();
+            _bucketIds = new ConcurrentDictionary<UInt64, Int64>();
+            _bucketIdList = new ConcurrentDictionary<Int64, byte>();
         }
 
         /// <summary>
         /// Returns the bucket ID for <c>value</c>.
         /// </summary>
-        public UInt64 GetBucketId(Int64 value)
+        public Int64 GetBucketId(Int64 value)
         {
             var bucketNo = _GetBucketNumber(value);
 
@@ -39,9 +39,9 @@ namespace PrismaDB.OrderPreservingBucketing
         /// <summary>
         /// Returns IDs of all buckets that are after the bucket of <c>value</c>. Does NOT include the bucket ID for <c>value</c>.
         /// </summary>
-        public List<UInt64> GetBucketsGreaterThan(Int64 value)
+        public List<Int64> GetBucketsGreaterThan(Int64 value)
         {
-            var res = new List<UInt64>();
+            var res = new List<Int64>();
 
             var st_index = FirstIndexAfter(value);
 
@@ -56,9 +56,9 @@ namespace PrismaDB.OrderPreservingBucketing
         /// <summary>
         /// Returns IDs of all buckets that are before the bucket of <c>value</c>. Does NOT include the bucket ID for <c>value</c>.
         /// </summary>
-        public List<UInt64> GetBucketsLessThan(Int64 value)
+        public List<Int64> GetBucketsLessThan(Int64 value)
         {
-            var res = new List<UInt64>();
+            var res = new List<Int64>();
 
             var st_index = FirstIndexBefore(value);
 
@@ -73,9 +73,9 @@ namespace PrismaDB.OrderPreservingBucketing
         /// <summary>
         /// Returns IDs of all buckets that are between the bucket of <c>value1</c> and the bucket of <c>value2</c>. Does NOT include the bucket IDs for <c>value1</c> and <c>value2</c>.
         /// </summary>
-        public List<UInt64> GetBucketsBetween(Int64 value1, Int64 value2)
+        public List<Int64> GetBucketsBetween(Int64 value1, Int64 value2)
         {
-            var res = new List<UInt64>();
+            var res = new List<Int64>();
 
             if (value1 > value2) swap(ref value1, ref value2);
 
@@ -99,9 +99,9 @@ namespace PrismaDB.OrderPreservingBucketing
             return diff / _width;
         }
 
-        private UInt64 _GenerateBucketId(UInt64 bucketNo)
+        private Int64 _GenerateBucketId(UInt64 bucketNo)
         {
-            UInt64 res;
+            Int64 res;
 
             using (var xrng = RandomNumberGenerator.Create())
             {
@@ -112,8 +112,8 @@ namespace PrismaDB.OrderPreservingBucketing
                     if (counter++ > tries) throw new ApplicationException($"Can't generate new bucket after {tries} tries");
                     var b = new byte[8];
                     xrng.GetBytes(b);
-                    res = BitConverter.ToUInt64(b, 0);
-                } while (_bucketIds.ContainsKey(res));
+                    res = BitConverter.ToInt64(b, 0);
+                } while (_bucketIdList.ContainsKey(res));
 
                 _bucketIdList[res] = 0;
                 _bucketIds[bucketNo] = res;
