@@ -37,13 +37,13 @@ namespace PrismaDB.OrderPreservingBucketing
         }
 
         /// <summary>
-        /// Returns IDs of all buckets that are after the bucket of <c>value</c>. Does NOT include the bucket ID for <c>value</c>.
+        /// Returns IDs of all buckets that are after the bucket of <c>value</c>. Includes the bucket ID (if exists) for <c>value</c>.
         /// </summary>
-        public List<Int64> GetBucketsGreaterThan(Int64 value)
+        public List<Int64> GetBucketsGEQ(Int64 value)
         {
             var res = new List<Int64>();
 
-            var st_index = FirstIndexAfter(value);
+            var st_index = IndexGEQ(value);
 
             for (var i = st_index; i < _bucketNos.Count; i++)
             {
@@ -54,13 +54,13 @@ namespace PrismaDB.OrderPreservingBucketing
         }
 
         /// <summary>
-        /// Returns IDs of all buckets that are before the bucket of <c>value</c>. Does NOT include the bucket ID for <c>value</c>.
+        /// Returns IDs of all buckets that are before the bucket of <c>value</c>. Includes the bucket ID (if exists) for <c>value</c>.
         /// </summary>
-        public List<Int64> GetBucketsLessThan(Int64 value)
+        public List<Int64> GetBucketsLEQ(Int64 value)
         {
             var res = new List<Int64>();
 
-            var st_index = FirstIndexBefore(value);
+            var st_index = IndexLEQ(value);
 
             for (var i = 0; i <= st_index; i++)
             {
@@ -71,7 +71,7 @@ namespace PrismaDB.OrderPreservingBucketing
         }
 
         /// <summary>
-        /// Returns IDs of all buckets that are between the bucket of <c>value1</c> and the bucket of <c>value2</c>. Does NOT include the bucket IDs for <c>value1</c> and <c>value2</c>.
+        /// Returns IDs of all buckets that are between the bucket of <c>value1</c> and the bucket of <c>value2</c>. Includes the bucket IDs (if exist) for <c>value1</c> and <c>value2</c>.
         /// </summary>
         public List<Int64> GetBucketsBetween(Int64 value1, Int64 value2)
         {
@@ -79,9 +79,9 @@ namespace PrismaDB.OrderPreservingBucketing
 
             if (value1 > value2) swap(ref value1, ref value2);
 
-            var start_index = FirstIndexAfter(value1);
-            var stop_index = FirstIndexBefore(value2);
-            
+            var start_index = IndexGEQ(value1);
+            var stop_index = IndexLEQ(value2);
+
             for (var i = start_index; i <= stop_index; i++)
             {
                 res.Add(_bucketIds[_bucketNos[i]]);
@@ -126,34 +126,23 @@ namespace PrismaDB.OrderPreservingBucketing
         /// <summary>
         /// Return index of the NEXT bucket. If there is no next bucket, returns -1.
         /// </summary>
-        private int FirstIndexAfter(Int64 value)
+        private int IndexGEQ(Int64 value)
         {
             var bid = _GetBucketNumber(value);
 
-            var (a, b) = _bucketNos.BinarySearch(bid);
-            if (a == b)
-            {
-                a += 1; // NEXT bucket
-                if (a < _bucketIds.Count)
-                    return a;
-                return -1;
-            }
+            var (_, b) = _bucketNos.BinarySearch(bid);
 
-            return b;
+            return b > _bucketIds.Count ? -1 : b;
         }
 
         /// <summary>
         /// Return index of the PREV bucket. If there is no prev bucket, returns -1.
         /// </summary>
-        private int FirstIndexBefore(Int64 value)
+        private int IndexLEQ(Int64 value)
         {
             var bid = _GetBucketNumber(value);
 
-            var (a, b) = _bucketNos.BinarySearch(bid);
-            if (a == b)
-            {
-                return b - 1; // if b == 0, we return -1 which is intended behavior
-            }
+            var (a, _) = _bucketNos.BinarySearch(bid);
 
             return a;
         }

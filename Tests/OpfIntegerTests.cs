@@ -15,13 +15,13 @@ namespace Tests
             var second = oi.GetBucketId(321);
             var third = oi.GetBucketId(890);
 
-            var gt50 = oi.GetBucketsGreaterThan(50);
+            var gt50 = oi.GetBucketsGEQ(50);
 
             Assert.Equal(2, gt50.Count);
             Assert.Contains(second, gt50);
             Assert.Contains(third, gt50);
 
-            var lt50 = oi.GetBucketsLessThan(50);
+            var lt50 = oi.GetBucketsLEQ(50);
             Assert.Single(lt50);
             Assert.Contains(first, lt50);
 
