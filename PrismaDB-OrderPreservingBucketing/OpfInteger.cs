@@ -124,7 +124,7 @@ namespace PrismaDB.OrderPreservingBucketing
         }
 
         /// <summary>
-        /// Return index of the NEXT bucket. If there is no next bucket, returns -1.
+        /// Return index of the NEXT bucket. If there is no next bucket, returns <code>_bucketNos.Count</code>.
         /// </summary>
         private int IndexGEQ(Int64 value)
         {
@@ -132,7 +132,7 @@ namespace PrismaDB.OrderPreservingBucketing
 
             var (_, b) = _bucketNos.BinarySearch(bid);
 
-            return b > _bucketIds.Count ? -1 : b;
+            return b;
         }
 
         /// <summary>
