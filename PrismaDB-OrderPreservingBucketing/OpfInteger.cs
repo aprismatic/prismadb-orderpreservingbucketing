@@ -14,6 +14,8 @@ namespace PrismaDB.OrderPreservingBucketing
         private ConcurrentDictionary<UInt64, Int64> _bucketIds; // bucket number -> bucket id
         private ConcurrentDictionary<Int64, byte> _bucketIdList; // existing bucket Ids
 
+        private object lockObj;
+
         public OpfInteger(int width)
         {
             if (width < 3) throw new ApplicationException("Bucket width should be >= 3");
@@ -21,6 +23,7 @@ namespace PrismaDB.OrderPreservingBucketing
             _bucketNos = new ConcurrentSortedList();
             _bucketIds = new ConcurrentDictionary<UInt64, Int64>();
             _bucketIdList = new ConcurrentDictionary<Int64, byte>();
+            lockObj = new Object();
         }
 
         /// <summary>
@@ -30,10 +33,17 @@ namespace PrismaDB.OrderPreservingBucketing
         {
             var bucketNo = _GetBucketNumber(value);
 
-            if (_bucketIds.ContainsKey(bucketNo))
-                return _bucketIds[bucketNo];
+            Int64 res;
 
-            return _GenerateBucketId(bucketNo);
+            lock (lockObj)
+            {
+                if (_bucketIds.ContainsKey(bucketNo))
+                    res = _bucketIds[bucketNo];
+                else
+                    res = _GenerateBucketId(bucketNo);
+            }
+
+            return res;
         }
 
         /// <summary>
