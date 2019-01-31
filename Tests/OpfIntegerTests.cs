@@ -46,7 +46,7 @@ namespace Tests
                 dict[next] = oi.GetBucketId(next);
             }
 
-            foreach(var key in dict.Keys)
+            foreach (var key in dict.Keys)
             {
                 Assert.Equal(dict[key], oi.GetBucketId(key));
             }
@@ -69,14 +69,30 @@ namespace Tests
             var keys = dict.Keys.ToList();
             for (var i = 0; i < keys.Count; i++)
             {
-                var item = keys[i];
-                var res = oi.GetBucketsGEQ(item);
+                // Inclusive of edge buckets
+                {
+                    var item = keys[i];
+                    var res = oi.GetBucketsGEQ(item);
 
-                Assert.Equal(keys.Skip(i)
-                                 .Select(x => dict[x])
-                                 .OrderBy(x => x)
-                                 .Distinct(),
-                             res.OrderBy(x => x));
+                    Assert.Equal(keys.Skip(i)
+                                     .Select(x => dict[x])
+                                     .OrderBy(x => x)
+                                     .Distinct(),
+                                 res.OrderBy(x => x));
+                }
+
+                // Exclusive of edge buckets
+                {
+                    var item = keys[i];
+                    var res = oi.GetBucketsGEQ(item, false);
+
+                    Assert.Equal(keys.Skip(i)
+                                     .Select(x => dict[x])
+                                     .Where(x => x != oi.GetBucketId(item))
+                                     .OrderBy(x => x)
+                                     .Distinct(),
+                                 res.OrderBy(x => x));
+                }
             }
         }
 
@@ -97,14 +113,30 @@ namespace Tests
             var keys = dict.Keys.ToList();
             for (var i = 0; i < keys.Count; i++)
             {
-                var item = keys[i];
-                var res = oi.GetBucketsLEQ(item);
+                // Inclusive of edge buckets
+                {
+                    var item = keys[i];
+                    var res = oi.GetBucketsLEQ(item);
 
-                Assert.Equal(keys.Take(i + 1)
-                                 .Select(x => dict[x])
-                                 .OrderBy(x => x)
-                                 .Distinct(),
-                             res.OrderBy(x => x));
+                    Assert.Equal(keys.Take(i + 1)
+                                     .Select(x => dict[x])
+                                     .OrderBy(x => x)
+                                     .Distinct(),
+                                 res.OrderBy(x => x));
+                }
+
+                // Exclusive of edge buckets
+                {
+                    var item = keys[i];
+                    var res = oi.GetBucketsLEQ(item, false);
+
+                    Assert.Equal(keys.Take(i + 1)
+                                     .Select(x => dict[x])
+                                     .Where(x => x != oi.GetBucketId(item))
+                                     .OrderBy(x => x)
+                                     .Distinct(),
+                                 res.OrderBy(x => x));
+                }
             }
         }
 
@@ -125,6 +157,7 @@ namespace Tests
             var keys = dict.Keys.ToList();
             for (var i = 0; i < keys.Count; i++)
             {
+                // Inclusive of edge buckets
                 for (var j = keys.Count - 1; j >= 0; j--)
                 {
                     var item1 = keys[i];
@@ -132,6 +165,18 @@ namespace Tests
                     var res = oi.GetBucketsBetween(item1, item2);
                     var expected = oi.GetBucketsGEQ(Math.Min(item1, item2))
                         .Intersect(oi.GetBucketsLEQ(Math.Max(item1, item2)));
+
+                    Assert.Equal(expected.OrderBy(x => x), res.OrderBy(x => x));
+                }
+
+                // Exclusive of edge buckets
+                for (var j = keys.Count - 1; j >= 0; j--)
+                {
+                    var item1 = keys[i];
+                    var item2 = keys[j];
+                    var res = oi.GetBucketsBetween(item1, item2, false);
+                    var expected = oi.GetBucketsGEQ(Math.Min(item1, item2), false)
+                        .Intersect(oi.GetBucketsLEQ(Math.Max(item1, item2), false));
 
                     Assert.Equal(expected.OrderBy(x => x), res.OrderBy(x => x));
                 }
