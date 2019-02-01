@@ -47,7 +47,7 @@ namespace PrismaDB.OrderPreservingBucketing
         }
 
         /// <summary>
-        /// Returns the bucket value range for min &lt= <c>value</c> &lt max.
+        /// Returns the bucket value range for min &lt= <c>value</c> &lt= max.
         /// </summary>
         public (Int64, Int64) GetBucketRange(Int64 value)
         {
@@ -55,7 +55,7 @@ namespace PrismaDB.OrderPreservingBucketing
             var bucketNumber = _GetBucketNumber(value);
 
             var min = uisubtract(bucketNumber * _width, bottom);
-            var max = min + (Int64)_width;
+            var max = min + (Int64)_width - 1;
             if (max < min)
                 max = Int64.MaxValue;
             return (min, max);

@@ -192,14 +192,14 @@ namespace Tests
             {
                 (var min, var max) = oi.GetBucketRange(i);
                 Assert.True(min <= i);
-                Assert.True(max > i);
+                Assert.True(max >= i);
             }
 
             for (var i = -2500; i <= 2500; i++)
             {
                 (var min, var max) = oi.GetBucketRange(i);
                 Assert.True(min <= i);
-                Assert.True(max > i);
+                Assert.True(max >= i);
             }
 
             for (var i = Int64.MaxValue; i >= Int64.MaxValue - 5000; i--)
