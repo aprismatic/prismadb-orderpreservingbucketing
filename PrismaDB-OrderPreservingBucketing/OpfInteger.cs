@@ -47,14 +47,25 @@ namespace PrismaDB.OrderPreservingBucketing
         }
 
         /// <summary>
-        /// Returns the bucket value range for min &lt;= <c>value</c> &lt;= max.
+        /// Returns the bucket value range where min &lt;= <c>value</c> &lt;= max.
         /// </summary>
         public (Int64, Int64) GetBucketRange(Int64 value)
         {
             var bottom = uiabs(Int64.MinValue);
             var bucketNumber = _GetBucketNumber(value);
 
-            var min = uisubtract(bucketNumber * _width, bottom);
+            var absMin = bucketNumber * _width;
+            Int64 min;
+            if (bottom > absMin)
+            {
+                var diff = (bottom - absMin) - 1;
+                min = -((Int64)diff) - 1;
+            }
+            else
+            {
+                min = (Int64)(absMin - bottom);
+            }
+
             var max = min + (Int64)_width - 1;
             if (max < min)
                 max = Int64.MaxValue;
@@ -189,12 +200,6 @@ namespace PrismaDB.OrderPreservingBucketing
             return value > 0 ?
                 (UInt64)value :
                 (UInt64)(-(value + 1)) + 1;
-        }
-
-        private static Int64 uisubtract(UInt64 first, UInt64 second)
-        {
-            var diff = (second - first) - 1;
-            return -((Int64)diff) - 1;
         }
 
         private static void swap(ref Int64 a, ref Int64 b)
