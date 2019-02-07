@@ -47,6 +47,32 @@ namespace PrismaDB.OrderPreservingBucketing
         }
 
         /// <summary>
+        /// Returns the bucket value range where min &lt;= <c>value</c> &lt;= max.
+        /// </summary>
+        public (Int64, Int64) GetBucketRange(Int64 value)
+        {
+            var bottom = uiabs(Int64.MinValue);
+            var bucketNumber = _GetBucketNumber(value);
+
+            var absMin = bucketNumber * _width;
+            Int64 min;
+            if (bottom > absMin)
+            {
+                var diff = (bottom - absMin) - 1;
+                min = -((Int64)diff) - 1;
+            }
+            else
+            {
+                min = (Int64)(absMin - bottom);
+            }
+
+            var max = min + (Int64)_width - 1;
+            if (max < min)
+                max = Int64.MaxValue;
+            return (min, max);
+        }
+
+        /// <summary>
         /// Returns IDs of all buckets that are after the bucket of <c>value</c>. Optionally excludes the bucket ID (if exists) for <c>value</c>.
         /// </summary>
         public List<Int64> GetBucketsGEQ(Int64 value, bool inclusive = true)
