@@ -49,27 +49,33 @@ namespace PrismaDB.OrderPreservingBucketing
         /// <summary>
         /// Returns the bucket value range where min &lt;= <c>value</c> &lt;= max.
         /// </summary>
-        public (Int64, Int64) GetBucketRange(Int64 value)
+        public BucketRange GetBucketRange(Int64 value)
         {
+            var res = new BucketRange();
             var bottom = uiabs(Int64.MinValue);
             var bucketNumber = _GetBucketNumber(value);
-
             var absMin = bucketNumber * _width;
-            Int64 min;
             if (bottom > absMin)
             {
                 var diff = (bottom - absMin) - 1;
-                min = -((Int64)diff) - 1;
+                res.MinValue = -((Int64)diff) - 1;
             }
             else
             {
-                min = (Int64)(absMin - bottom);
+                res.MinValue = (Int64)(absMin - bottom);
             }
 
-            var max = min + (Int64)_width - 1;
-            if (max < min)
-                max = Int64.MaxValue;
-            return (min, max);
+            res.MaxValue = res.MinValue + (Int64)_width - 1;
+            if (res.MaxValue < res.MinValue)
+            {
+                res.MaxValue = Int64.MaxValue;
+                res.IsLastBucket = true;
+            }
+            if (res.MinValue == Int64.MinValue)
+            {
+                res.IsFirstBucket = true;
+            }
+            return res;
         }
 
         /// <summary>
@@ -207,6 +213,22 @@ namespace PrismaDB.OrderPreservingBucketing
             var temp = a;
             a = b;
             b = temp;
+        }
+
+        public class BucketRange
+        {
+            public Int64 MinValue { get; set; }
+            public Int64 MaxValue { get; set; }
+            public bool IsFirstBucket { get; set; }
+            public bool IsLastBucket { get; set; }
+
+            public BucketRange()
+            {
+                MinValue = Int64.MinValue;
+                MaxValue = Int64.MaxValue;
+                IsFirstBucket = false;
+                IsLastBucket = false;
+            }
         }
     }
 }

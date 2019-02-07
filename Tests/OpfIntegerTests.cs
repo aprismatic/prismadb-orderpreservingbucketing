@@ -190,23 +190,45 @@ namespace Tests
 
             for (var i = Int64.MinValue; i <= Int64.MinValue + 5000; i++)
             {
-                (var min, var max) = oi.GetBucketRange(i);
-                Assert.True(min <= i);
-                Assert.True(max >= i);
+                var range = oi.GetBucketRange(i);
+                Assert.True(range.MinValue <= i);
+                Assert.True(range.MaxValue >= i);
+                if (range.MinValue == Int64.MinValue)
+                {
+                    Assert.True(range.IsFirstBucket);
+                    Assert.False(range.IsLastBucket);
+                }
+                else
+                {
+                    Assert.False(range.IsFirstBucket);
+                    Assert.False(range.IsLastBucket);
+                }
             }
 
             for (var i = -2500; i <= 2500; i++)
             {
-                (var min, var max) = oi.GetBucketRange(i);
-                Assert.True(min <= i);
-                Assert.True(max >= i);
+                var range = oi.GetBucketRange(i);
+                Assert.True(range.MinValue <= i);
+                Assert.True(range.MaxValue >= i);
+                Assert.False(range.IsFirstBucket);
+                Assert.False(range.IsLastBucket);
             }
 
             for (var i = Int64.MaxValue; i >= Int64.MaxValue - 5000; i--)
             {
-                (var min, var max) = oi.GetBucketRange(i);
-                Assert.True(min <= i);
-                Assert.True(max >= i);
+                var range = oi.GetBucketRange(i);
+                Assert.True(range.MinValue <= i);
+                Assert.True(range.MaxValue >= i);
+                if (range.MaxValue == Int64.MaxValue)
+                {
+                    Assert.False(range.IsFirstBucket);
+                    Assert.True(range.IsLastBucket);
+                }
+                else
+                {
+                    Assert.False(range.IsFirstBucket);
+                    Assert.False(range.IsLastBucket);
+                }
             }
         }
     }
