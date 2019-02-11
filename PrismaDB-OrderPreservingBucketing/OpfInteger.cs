@@ -87,8 +87,8 @@ namespace PrismaDB.OrderPreservingBucketing
 
             var st_index = IndexGEQ(value);
 
-            if (!inclusive)
-                st_index += 1;
+            if (!inclusive && (_bucketNos[st_index] == _GetBucketNumber(value)))
+                st_index++;
 
             for (var i = st_index; i < _bucketNos.Count; i++)
             {
@@ -107,8 +107,8 @@ namespace PrismaDB.OrderPreservingBucketing
 
             var st_index = IndexLEQ(value);
 
-            if (!inclusive)
-                st_index -= 1;
+            if (!inclusive && (_bucketNos[st_index] == _GetBucketNumber(value)))
+                st_index--;
 
             for (var i = 0; i <= st_index; i++)
             {
@@ -132,8 +132,10 @@ namespace PrismaDB.OrderPreservingBucketing
 
             if (!inclusive)
             {
-                start_index += 1;
-                stop_index -= 1;
+                if (_bucketNos[start_index] == _GetBucketNumber(value1))
+                    start_index++;
+                if (_bucketNos[stop_index] == _GetBucketNumber(value2))
+                    stop_index--;
             }
 
             for (var i = start_index; i <= stop_index; i++)
