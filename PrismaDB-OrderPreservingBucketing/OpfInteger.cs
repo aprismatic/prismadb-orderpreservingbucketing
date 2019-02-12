@@ -79,16 +79,17 @@ namespace PrismaDB.OrderPreservingBucketing
         }
 
         /// <summary>
-        /// Returns IDs of all buckets that are after the bucket of <c>value</c>. Optionally excludes the bucket ID (if exists) for <c>value</c>.
+        /// Returns IDs of all buckets that are after the bucket of <c>value</c>.
         /// </summary>
-        public List<Int64> GetBucketsGEQ(Int64 value, bool inclusive = true)
+        public List<Int64> GetBucketsGT(Int64 value)
         {
             var res = new List<Int64>();
 
             var st_index = IndexGEQ(value);
 
-            if (!inclusive)
-                st_index += 1;
+            if (GetBucketRange(value).MaxValue == value
+                && (_bucketNos[st_index] == _GetBucketNumber(value)))
+                st_index++;
 
             for (var i = st_index; i < _bucketNos.Count; i++)
             {
@@ -99,16 +100,17 @@ namespace PrismaDB.OrderPreservingBucketing
         }
 
         /// <summary>
-        /// Returns IDs of all buckets that are before the bucket of <c>value</c>. Optionally excludes the bucket ID (if exists) for <c>value</c>.
+        /// Returns IDs of all buckets that are before the bucket of <c>value</c>.
         /// </summary>
-        public List<Int64> GetBucketsLEQ(Int64 value, bool inclusive = true)
+        public List<Int64> GetBucketsLT(Int64 value)
         {
             var res = new List<Int64>();
 
             var st_index = IndexLEQ(value);
 
-            if (!inclusive)
-                st_index -= 1;
+            if (GetBucketRange(value).MinValue == value
+                && (_bucketNos[st_index] == _GetBucketNumber(value)))
+                st_index--;
 
             for (var i = 0; i <= st_index; i++)
             {
@@ -119,9 +121,9 @@ namespace PrismaDB.OrderPreservingBucketing
         }
 
         /// <summary>
-        /// Returns IDs of all buckets that are between the bucket of <c>value1</c> and the bucket of <c>value2</c>. Optionally excludes the bucket IDs (if exist) for <c>value1</c> and <c>value2</c>.
+        /// Returns IDs of all buckets that are between the bucket of <c>value1</c> and the bucket of <c>value2</c>.
         /// </summary>
-        public List<Int64> GetBucketsBetween(Int64 value1, Int64 value2, bool inclusive = true)
+        public List<Int64> GetBucketsBetween(Int64 value1, Int64 value2)
         {
             var res = new List<Int64>();
 
@@ -130,11 +132,12 @@ namespace PrismaDB.OrderPreservingBucketing
             var start_index = IndexGEQ(value1);
             var stop_index = IndexLEQ(value2);
 
-            if (!inclusive)
-            {
-                start_index += 1;
-                stop_index -= 1;
-            }
+            if (GetBucketRange(value1).MaxValue == value1
+                && _bucketNos[start_index] == _GetBucketNumber(value1))
+                start_index++;
+            if (GetBucketRange(value2).MinValue == value2
+                && _bucketNos[stop_index] == _GetBucketNumber(value2))
+                stop_index--;
 
             for (var i = start_index; i <= stop_index; i++)
             {
