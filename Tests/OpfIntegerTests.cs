@@ -73,7 +73,7 @@ namespace Tests
                 var res = oi.GetBucketsGT(item);
 
                 Assert.Equal(keys.Skip(i)
-                                 .Where(x => oi.GetBucketRange(item).MaxValue != x)
+                                 .Where(x => oi.GetBucketRange(x).MaxValue != item)
                                  .Select(x => dict[x])
                                  .OrderBy(x => x)
                                  .Distinct(),
@@ -102,7 +102,7 @@ namespace Tests
                 var res = oi.GetBucketsLT(item);
 
                 Assert.Equal(keys.Take(i + 1)
-                                 .Where(x => oi.GetBucketRange(item).MinValue != x)
+                                 .Where(x => oi.GetBucketRange(x).MinValue != item)
                                  .Select(x => dict[x])
                                  .OrderBy(x => x)
                                  .Distinct(),
