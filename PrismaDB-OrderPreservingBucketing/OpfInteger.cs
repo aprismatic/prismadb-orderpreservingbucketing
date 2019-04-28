@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -87,6 +86,9 @@ namespace PrismaDB.OrderPreservingBucketing
 
             var st_index = IndexGEQ(value);
 
+            if (st_index >= _bucketNos.Count)
+                return res;
+
             if (GetBucketRange(value).MaxValue == value
                 && (_bucketNos[st_index] == _GetBucketNumber(value)))
                 st_index++;
@@ -107,6 +109,9 @@ namespace PrismaDB.OrderPreservingBucketing
             var res = new List<Int64>();
 
             var st_index = IndexLEQ(value);
+
+            if (st_index < 0)
+                return res;
 
             if (GetBucketRange(value).MinValue == value
                 && (_bucketNos[st_index] == _GetBucketNumber(value)))
